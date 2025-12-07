@@ -44,6 +44,22 @@ h3 {
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06);
 }
 
+/* Logic switcher */
+.logic-switcher {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.logic-switcher select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
 .step-indicator {
   font-size: 0.9rem;
   color: #555;

@@ -1,8 +1,17 @@
+// Mapping between locale and JSON file
+const logicFiles = {
+  en_US: "logic_en_US.json",
+  es_AR: "logic_es_AR.json",
+  es_MX: "logic_es_MX.json",
+  pt_BR: "logic_pt_BR.json"
+};
+
 // Simple app state
 const appState = {
   config: null,
   currentIndex: 0,
-  answers: {}
+  answers: {},
+  currentLocale: "en_US"
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,22 +20,47 @@ document.addEventListener("DOMContentLoaded", () => {
   const backButton = document.getElementById("back-button");
   const nextButton = document.getElementById("next-button");
   const restartButton = document.getElementById("restart-button");
+  const logicSelect = document.getElementById("logic-select");
+  const errorEl = document.getElementById("error-message");
+  const stepIndicator = document.getElementById("step-indicator");
+  const questionLabel = document.getElementById("question-label");
+  const questionHelp = document.getElementById("question-help");
+  const questionInput = document.getElementById("question-input");
 
-  // Load logic.json
-  fetch("logic.json")
-    .then((res) => res.json())
-    .then((config) => {
-      appState.config = config;
-      appState.currentIndex = 0;
-      appState.answers = {};
-      renderQuestion();
-    })
-    .catch((err) => {
-      console.error("Error loading logic.json", err);
-      const errorEl = document.getElementById("error-message");
-      errorEl.textContent =
-        "There was a problem loading the assessment configuration.";
-    });
+  function resetUIForLoading() {
+    questionCard.hidden = false;
+    resultsCard.hidden = false; // show card but with "Loading"
+    resultsCard.hidden = true;  // ensure results are hidden
+    stepIndicator.textContent = "Loading assessment…";
+    questionLabel.textContent = "";
+    questionHelp.textContent = "";
+    questionInput.innerHTML = "";
+    errorEl.textContent = "";
+  }
+
+  function loadConfig(locale) {
+    const file = logicFiles[locale] || logicFiles["en_US"];
+    appState.currentLocale = locale;
+    appState.config = null;
+    appState.currentIndex = 0;
+    appState.answers = {};
+
+    resetUIForLoading();
+
+    fetch(file)
+      .then((res) => res.json())
+      .then((config) => {
+        appState.config = config;
+        appState.currentIndex = 0;
+        appState.answers = {};
+        renderQuestion();
+      })
+      .catch((err) => {
+        console.error("Error loading config:", err);
+        errorEl.textContent =
+          "There was a problem loading the assessment configuration.";
+      });
+  }
 
   backButton.addEventListener("click", () => {
     if (!appState.config) return;
@@ -61,6 +95,14 @@ document.addEventListener("DOMContentLoaded", () => {
     questionCard.hidden = false;
     renderQuestion();
   });
+
+  logicSelect.addEventListener("change", (e) => {
+    const locale = e.target.value;
+    loadConfig(locale);
+  });
+
+  // Initial load (default option in the select)
+  loadConfig(logicSelect.value);
 });
 
 // Render the current question (multi-step UI)

@@ -1,0 +1,337 @@
+{
+  "meta": {
+    "market": "BR",
+    "assessment_id": "vacinas_respiratorias_demo",
+    "version": "2025-01-01",
+    "language": "pt-BR"
+  },
+  "questions": [
+    {
+      "id": "q_age",
+      "type": "number",
+      "label": "Quantos anos você tem?",
+      "min": 18,
+      "max": 120,
+      "required": true
+    },
+    {
+      "id": "q_pregnant",
+      "type": "single_choice",
+      "label": "Você está grávida ou planeja engravidar nos próximos meses?",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Sim" },
+        { "value": "no", "label": "Não" },
+        { "value": "not_sure", "label": "Não tenho certeza" },
+        { "value": "not_applicable", "label": "Esta pergunta não se aplica a mim" }
+      ]
+    },
+    {
+      "id": "q_conditions",
+      "type": "multi_choice",
+      "label": "Algum profissional de saúde já informou que você tem alguma das seguintes condições?",
+      "help_text": "Selecione todas as opções que se aplicam.",
+      "options": [
+        { "value": "heart_disease", "label": "Doença cardíaca" },
+        {
+          "value": "lung_disease",
+          "label": "Doença pulmonar crônica (por exemplo, DPOC ou asma grave)"
+        },
+        { "value": "diabetes", "label": "Diabetes" },
+        { "value": "kidney_disease", "label": "Doença renal crônica" },
+        { "value": "weak_immune", "label": "Sistema imunológico enfraquecido" },
+        { "value": "none", "label": "Nenhuma das opções anteriores" }
+      ]
+    },
+    {
+      "id": "q_ltc",
+      "type": "single_choice",
+      "label": "Você mora atualmente em uma instituição de longa permanência (como casa de repouso)?",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Sim" },
+        { "value": "no", "label": "Não" }
+      ]
+    },
+    {
+      "id": "q_recent_vaccines",
+      "type": "multi_choice",
+      "label": "Você recebeu recentemente alguma das seguintes vacinas respiratórias?",
+      "help_text": "Selecione todas as opções que se aplicam ou \"Nenhuma das anteriores\".",
+      "options": [
+        { "value": "covid19", "label": "Vacina contra COVID-19" },
+        { "value": "flu", "label": "Vacina contra a gripe (influenza)" },
+        { "value": "pneumo", "label": "Vacina pneumocócica (pneumonia)" },
+        { "value": "rsv", "label": "Vacina contra o VSR" },
+        { "value": "none", "label": "Nenhuma das anteriores / Não tenho certeza" }
+      ]
+    }
+  ],
+  "variable_mapping": {
+    "age": {
+      "from_question": "q_age",
+      "type": "number"
+    },
+    "is_pregnant": {
+      "from_question": "q_pregnant",
+      "type": "boolean",
+      "true_when": [
+        "yes"
+      ]
+    },
+    "has_chronic_condition": {
+      "from_question": "q_conditions",
+      "type": "boolean",
+      "true_when_any_of": [
+        "heart_disease",
+        "lung_disease",
+        "diabetes",
+        "kidney_disease",
+        "weak_immune"
+      ]
+    },
+    "lives_in_ltc": {
+      "from_question": "q_ltc",
+      "type": "boolean",
+      "true_when": [
+        "yes"
+      ]
+    },
+    "has_recent_covid19_vaccine": {
+      "from_question": "q_recent_vaccines",
+      "type": "boolean",
+      "true_when_any_of": [
+        "covid19"
+      ]
+    },
+    "has_recent_flu_vaccine": {
+      "from_question": "q_recent_vaccines",
+      "type": "boolean",
+      "true_when_any_of": [
+        "flu"
+      ]
+    },
+    "has_recent_pneumo_vaccine": {
+      "from_question": "q_recent_vaccines",
+      "type": "boolean",
+      "true_when_any_of": [
+        "pneumo"
+      ]
+    },
+    "has_recent_rsv_vaccine": {
+      "from_question": "q_recent_vaccines",
+      "type": "boolean",
+      "true_when_any_of": [
+        "rsv"
+      ]
+    }
+  },
+  "rules": {
+    "vaccines": [
+      {
+        "id": "covid19",
+        "label": "Vacina contra COVID-19",
+        "description": "Lógica de demonstração para possível elegibilidade a vacina contra COVID-19.",
+        "eligibility": {
+          "logic": "OR",
+          "groups": [
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 65
+                }
+              ]
+            },
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 18
+                },
+                {
+                  "var": "has_chronic_condition",
+                  "op": "==",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "output": {
+          "eligible_message_key": "covid19_eligible",
+          "not_eligible_message_key": "covid19_not_eligible",
+          "cta_type": "see_locations"
+        }
+      },
+      {
+        "id": "flu",
+        "label": "Vacina contra a gripe (influenza)",
+        "description": "Lógica de demonstração para possível elegibilidade a vacina contra a gripe.",
+        "eligibility": {
+          "logic": "OR",
+          "groups": [
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 65
+                }
+              ]
+            },
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 50
+                },
+                {
+                  "var": "has_chronic_condition",
+                  "op": "==",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "output": {
+          "eligible_message_key": "flu_eligible",
+          "not_eligible_message_key": "flu_not_eligible",
+          "cta_type": "see_locations"
+        }
+      },
+      {
+        "id": "pneumo",
+        "label": "Vacina pneumocócica (pneumonia)",
+        "description": "Lógica de demonstração para possível elegibilidade a vacina pneumocócica.",
+        "eligibility": {
+          "logic": "OR",
+          "groups": [
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 65
+                }
+              ]
+            },
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 19
+                },
+                {
+                  "var": "has_chronic_condition",
+                  "op": "==",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "lives_in_ltc",
+                  "op": "==",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "output": {
+          "eligible_message_key": "pneumo_eligible",
+          "not_eligible_message_key": "pneumo_not_eligible",
+          "cta_type": "see_locations"
+        }
+      },
+      {
+        "id": "rsv",
+        "label": "Vacina contra o VSR",
+        "description": "Lógica de demonstração para possível elegibilidade a vacina contra o VSR.",
+        "eligibility": {
+          "logic": "OR",
+          "groups": [
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 60
+                }
+              ]
+            },
+            {
+              "logic": "AND",
+              "conditions": [
+                {
+                  "var": "age",
+                  "op": ">=",
+                  "value": 18
+                },
+                {
+                  "var": "has_chronic_condition",
+                  "op": "==",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "output": {
+          "eligible_message_key": "rsv_eligible",
+          "not_eligible_message_key": "rsv_not_eligible",
+          "cta_type": "see_locations"
+        }
+      }
+    ]
+  },
+  "messages": {
+    "covid19_eligible": {
+      "title": "De acordo com suas respostas, você pode ser elegível para uma vacina contra COVID-19.",
+      "body": "Esta é apenas uma lógica de demonstração. Um profissional de saúde pode confirmar qual vacina é mais adequada para o seu caso."
+    },
+    "covid19_not_eligible": {
+      "title": "Você pode não fazer parte dos grupos priorizados neste demo.",
+      "body": "Esta ferramenta não substitui a orientação médica. Um profissional de saúde pode indicar quais vacinas são recomendadas para você."
+    },
+    "flu_eligible": {
+      "title": "De acordo com suas respostas, você pode ser elegível para uma vacina contra a gripe (influenza).",
+      "body": "Um profissional de saúde pode orientar se a vacina contra a gripe é recomendada para você e qual esquema é mais adequado."
+    },
+    "flu_not_eligible": {
+      "title": "Você pode não fazer parte dos grupos priorizados neste demo para vacina contra a gripe.",
+      "body": "Sempre consulte um profissional de saúde para receber recomendações personalizadas sobre vacinas."
+    },
+    "pneumo_eligible": {
+      "title": "De acordo com este demo, você pode ser elegível para uma vacina pneumocócica.",
+      "body": "Um profissional de saúde pode indicar qual tipo de vacina pneumocócica e em que momento pode ser mais apropriada para você."
+    },
+    "pneumo_not_eligible": {
+      "title": "Você pode não estar nos grupos priorizados neste demo para vacina pneumocócica.",
+      "body": "Esta ferramenta é apenas demonstrativa. Um profissional de saúde pode fazer recomendações com base no seu histórico clínico."
+    },
+    "rsv_eligible": {
+      "title": "De acordo com suas respostas, você pode ser elegível para uma vacina contra o VSR.",
+      "body": "Converse com um profissional de saúde para avaliar se uma vacina contra o vírus sincicial respiratório (VSR) é adequada para você."
+    },
+    "rsv_not_eligible": {
+      "title": "Você pode não fazer parte dos grupos priorizados neste demo para vacina contra o VSR.",
+      "body": "Esta ferramenta não substitui o aconselhamento médico. Um profissional de saúde pode orientar sobre vacinas respiratórias de forma personalizada."
+    }
+  }
+}
