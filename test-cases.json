@@ -1,0 +1,62 @@
+[
+  {
+    "name": "EN: 70-year-old with chronic condition",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 70,
+      "q_pregnant": "no",
+      "q_conditions": ["heart_disease"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": true,
+        "flu": true,
+        "pneumo": true,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "ES_AR: 30-year-old, no conditions",
+    "locale": "es_AR",
+    "answers": {
+      "q_age": 30,
+      "q_pregnant": "no",
+      "q_conditions": ["none"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": false,
+        "flu": false,
+        "pneumo": false,
+        "rsv": false
+      },
+      "shouldShowLocator": false
+    }
+  },
+  {
+    "name": "PT_BR: 80-year-old in long-term care",
+    "locale": "pt_BR",
+    "answers": {
+      "q_age": 80,
+      "q_pregnant": "no",
+      "q_conditions": ["none"],
+      "q_ltc": "yes",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": true,
+        "flu": true,
+        "pneumo": true,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  }
+]
