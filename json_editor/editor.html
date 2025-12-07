@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eligibility Logic Editor (JSON)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="editor.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>Eligibility Logic Editor</h1>
+      <p class="subtitle">
+        Load a <code>logic_*.json</code> file, edit it with the UI and download the updated JSON.
+        This is for demo purposes only (no medical logic validation).
+      </p>
+
+      <div class="toolbar">
+        <label class="file-input-label">
+          <span>Load JSON file</span>
+          <input type="file" id="file-input" accept=".json" />
+        </label>
+
+        <button id="new-empty-btn" type="button">New empty config</button>
+        <button id="download-btn" type="button" disabled>Download JSON</button>
+      </div>
+
+      <div id="status-bar" class="status-bar">
+        No config loaded yet.
+      </div>
+    </header>
+
+    <main class="app-main">
+      <nav class="tabs">
+        <button class="tab-button active" data-tab="meta">Meta</button>
+        <button class="tab-button" data-tab="questions">Questions</button>
+        <button class="tab-button" data-tab="variables">Variable mapping</button>
+        <button class="tab-button" data-tab="rules">Rules (vaccines)</button>
+        <button class="tab-button" data-tab="messages">Messages</button>
+        <button class="tab-button" data-tab="raw">Raw JSON</button>
+      </nav>
+
+      <section id="tab-meta" class="tab-panel active">
+        <h2>Meta</h2>
+        <div class="form-grid">
+          <label>
+            Market
+            <input type="text" id="meta-market" />
+          </label>
+          <label>
+            Assessment ID
+            <input type="text" id="meta-assessment-id" />
+          </label>
+          <label>
+            Version
+            <input type="text" id="meta-version" />
+          </label>
+          <label>
+            Language
+            <input type="text" id="meta-language" />
+          </label>
+        </div>
+        <button id="meta-save-btn" type="button">Save meta</button>
+      </section>
+
+      <section id="tab-questions" class="tab-panel">
+        <h2>Questions</h2>
+
+        <div class="split">
+          <div class="split-left">
+            <div class="list-header">
+              <span>Existing questions</span>
+              <button id="question-add-btn" type="button">Add question</button>
+            </div>
+            <ul id="questions-list" class="item-list"></ul>
+          </div>
+
+          <div class="split-right">
+            <h3>Question editor</h3>
+            <div id="question-editor-empty" class="placeholder">
+              Select a question or create a new one.
+            </div>
+            <div id="question-editor" class="panel" hidden>
+              <div class="form-grid">
+                <label>
+                  ID
+                  <input type="text" id="q-id" />
+                </label>
+                <label>
+                  Type
+                  <select id="q-type">
+                    <option value="number">number</option>
+                    <option value="single_choice">single_choice</option>
+                    <option value="multi_choice">multi_choice</option>
+                  </select>
+                </label>
+                <label class="full-width">
+                  Label
+                  <input type="text" id="q-label" />
+                </label>
+                <label class="full-width">
+                  Help text
+                  <input type="text" id="q-help-text" />
+                </label>
+                <label>
+                  Required
+                  <select id="q-required">
+                    <option value="false">false</option>
+                    <option value="true">true</option>
+                  </select>
+                </label>
+                <label id="q-min-wrapper">
+                  Min (number)
+                  <input type="number" id="q-min" />
+                </label>
+                <label id="q-max-wrapper">
+                  Max (number)
+                  <input type="number" id="q-max" />
+                </label>
+              </div>
+
+              <div id="q-options-wrapper">
+                <h4>Options (for single_choice / multi_choice)</h4>
+                <div class="options-header">
+                  <button id="q-add-option-btn" type="button">Add option</button>
+                </div>
+                <table class="options-table">
+                  <thead>
+                    <tr>
+                      <th>Value</th>
+                      <th>Label</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="q-options-body"></tbody>
+                </table>
+              </div>
+
+              <div class="editor-actions">
+                <button id="q-save-btn" type="button">Save question</button>
+                <button id="q-delete-btn" type="button" class="danger">
+                  Delete question
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-variables" class="tab-panel">
+        <h2>Variable mapping</h2>
+
+        <div class="split">
+          <div class="split-left">
+            <div class="list-header">
+              <span>Variables</span>
+              <button id="var-add-btn" type="button">Add variable</button>
+            </div>
+            <ul id="variables-list" class="item-list"></ul>
+          </div>
+
+          <div class="split-right">
+            <h3>Variable editor</h3>
+            <div id="var-editor-empty" class="placeholder">
+              Select a variable or create a new one.
+            </div>
+            <div id="var-editor" class="panel" hidden>
+              <div class="form-grid">
+                <label>
+                  Variable name
+                  <input type="text" id="var-name" />
+                </label>
+                <label>
+                  Type
+                  <select id="var-type">
+                    <option value="number">number</option>
+                    <option value="boolean">boolean</option>
+                  </select>
+                </label>
+                <label class="full-width">
+                  From question (ID)
+                  <input type="text" id="var-from-question" />
+                </label>
+              </div>
+
+              <div id="var-boolean-config">
+                <h4>Boolean mapping config</h4>
+                <p class="hint">
+                  Use <strong>true_when</strong> for single_choice, or
+                  <strong>true_when_any_of</strong> for multi_choice.
+                </p>
+                <label class="full-width">
+                  true_when (single value answers) – comma separated
+                  <input type="text" id="var-true-when" placeholder="e.g. yes" />
+                </label>
+                <label class="full-width">
+                  true_when_any_of (multi-choice) – comma separated
+                  <input
+                    type="text"
+                    id="var-true-when-any"
+                    placeholder="e.g. heart_disease,lung_disease"
+                  />
+                </label>
+              </div>
+
+              <div class="editor-actions">
+                <button id="var-save-btn" type="button">Save variable</button>
+                <button id="var-delete-btn" type="button" class="danger">
+                  Delete variable
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-rules" class="tab-panel">
+        <h2>Rules (vaccines)</h2>
+
+        <div class="split">
+          <div class="split-left">
+            <div class="list-header">
+              <span>Vaccines / rule sets</span>
+              <button id="rule-add-btn" type="button">Add vaccine rule</button>
+            </div>
+            <ul id="rules-list" class="item-list"></ul>
+          </div>
+
+          <div class="split-right">
+            <h3>Vaccine rule editor</h3>
+            <div id="rule-editor-empty" class="placeholder">
+              Select a vaccine or create a new one.
+            </div>
+            <div id="rule-editor" class="panel" hidden>
+              <div class="form-grid">
+                <label>
+                  ID
+                  <input type="text" id="rule-id" />
+                </label>
+                <label class="full-width">
+                  Label
+                  <input type="text" id="rule-label" />
+                </label>
+                <label class="full-width">
+                  Description
+                  <input type="text" id="rule-description" />
+                </label>
+              </div>
+
+              <h4>Eligibility JSON</h4>
+              <p class="hint">
+                Edit the eligibility object here. It must be valid JSON (e.g.
+                <code>{"logic":"OR","groups":[...]}</code>).
+              </p>
+              <textarea id="rule-eligibility" rows="10"></textarea>
+
+              <h4>Output JSON</h4>
+              <p class="hint">
+                Edit the output object here. It must be valid JSON (e.g.
+                <code>{"eligible_message_key":"x","not_eligible_message_key":"y","cta_type":"see_locations"}</code>).
+              </p>
+              <textarea id="rule-output" rows="5"></textarea>
+
+              <div class="editor-actions">
+                <button id="rule-save-btn" type="button">Save vaccine rule</button>
+                <button id="rule-delete-btn" type="button" class="danger">
+                  Delete vaccine rule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-messages" class="tab-panel">
+        <h2>Messages</h2>
+
+        <div class="split">
+          <div class="split-left">
+            <div class="list-header">
+              <span>Message keys</span>
+              <button id="msg-add-btn" type="button">Add message</button>
+            </div>
+            <ul id="messages-list" class="item-list"></ul>
+          </div>
+
+          <div class="split-right">
+            <h3>Message editor</h3>
+            <div id="msg-editor-empty" class="placeholder">
+              Select a message key or create a new one.
+            </div>
+            <div id="msg-editor" class="panel" hidden>
+              <div class="form-grid">
+                <label>
+                  Key
+                  <input type="text" id="msg-key" />
+                </label>
+                <label class="full-width">
+                  Title
+                  <input type="text" id="msg-title" />
+                </label>
+              </div>
+              <label class="full-width">
+                Body
+                <textarea id="msg-body" rows="6"></textarea>
+              </label>
+
+              <div class="editor-actions">
+                <button id="msg-save-btn" type="button">Save message</button>
+                <button id="msg-delete-btn" type="button" class="danger">
+                  Delete message
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-raw" class="tab-panel">
+        <h2>Raw JSON view (read-only)</h2>
+        <p class="hint">
+          This is a read-only snapshot of the current config. Use the other tabs to edit.
+        </p>
+        <textarea id="raw-json" readonly rows="25"></textarea>
+      </section>
+    </main>
+  </div>
+
+  <script src="editor.js"></script>
+</body>
+</html>
