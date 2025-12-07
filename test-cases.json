@@ -1,11 +1,11 @@
 [
   {
-    "name": "EN: 70-year-old with chronic condition",
+    "name": "EN: 70yo, no conditions (all vaccines via 65+ thresholds)",
     "locale": "en_US",
     "answers": {
       "q_age": 70,
       "q_pregnant": "no",
-      "q_conditions": ["heart_disease"],
+      "q_conditions": ["none"],
       "q_ltc": "no",
       "q_recent_vaccines": ["none"]
     },
@@ -20,10 +20,150 @@
     }
   },
   {
-    "name": "ES_AR: 30-year-old, no conditions",
-    "locale": "es_AR",
+    "name": "EN: 45yo, chronic condition (adult+chronic path)",
+    "locale": "en_US",
     "answers": {
-      "q_age": 30,
+      "q_age": 45,
+      "q_pregnant": "no",
+      "q_conditions": ["diabetes"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": true,
+        "flu": false,
+        "pneumo": true,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "EN: 25yo, no risk factors (nobody eligible)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 25,
+      "q_pregnant": "no",
+      "q_conditions": ["none"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["flu"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": false,
+        "flu": false,
+        "pneumo": false,
+        "rsv": false
+      },
+      "shouldShowLocator": false
+    }
+  },
+  {
+    "name": "EN: 64yo, chronic condition (flu 50+ & chronic, rsv 60+)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 64,
+      "q_pregnant": "no",
+      "q_conditions": ["heart_disease"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["covid19", "flu"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": true,
+        "flu": true,
+        "pneumo": true,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "EN: 50yo, chronic condition (flu via 50+ & chronic, RSV via adult+chronic)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 50,
+      "q_pregnant": "no",
+      "q_conditions": ["lung_disease"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": true,
+        "flu": true,
+        "pneumo": true,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "EN: 50yo, LTC resident, no chronic condition (pneumo only via LTC)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 50,
+      "q_pregnant": "no",
+      "q_conditions": ["none"],
+      "q_ltc": "yes",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": false,
+        "flu": false,
+        "pneumo": true,
+        "rsv": false
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "EN: 60yo, no conditions (RSV via 60+ only)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 60,
+      "q_pregnant": "no",
+      "q_conditions": ["none"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": false,
+        "flu": false,
+        "pneumo": false,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "EN: 59yo, chronic condition (RSV via adult+chronic path)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 59,
+      "q_pregnant": "no",
+      "q_conditions": ["kidney_disease"],
+      "q_ltc": "no",
+      "q_recent_vaccines": ["none"]
+    },
+    "expected": {
+      "vaccines": {
+        "covid19": true,
+        "flu": true,
+        "pneumo": true,
+        "rsv": true
+      },
+      "shouldShowLocator": true
+    }
+  },
+  {
+    "name": "EN: 59yo, no conditions (everyone false, RSV boundary below 60)",
+    "locale": "en_US",
+    "answers": {
+      "q_age": 59,
       "q_pregnant": "no",
       "q_conditions": ["none"],
       "q_ltc": "no",
@@ -37,26 +177,6 @@
         "rsv": false
       },
       "shouldShowLocator": false
-    }
-  },
-  {
-    "name": "PT_BR: 80-year-old in long-term care",
-    "locale": "pt_BR",
-    "answers": {
-      "q_age": 80,
-      "q_pregnant": "no",
-      "q_conditions": ["none"],
-      "q_ltc": "yes",
-      "q_recent_vaccines": ["none"]
-    },
-    "expected": {
-      "vaccines": {
-        "covid19": true,
-        "flu": true,
-        "pneumo": true,
-        "rsv": true
-      },
-      "shouldShowLocator": true
     }
   }
 ]
