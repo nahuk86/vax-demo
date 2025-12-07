@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Respiratory Vaccine Eligibility – Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Respiratory Vaccine Eligibility – Prototype</h1>
+    <p class="small-text">
+      This is a <strong>technical prototype</strong> of a JSON-driven eligibility assessment.
+      It is for demonstration purposes only and does not provide medical advice.
+    </p>
+
+    <!-- Multi-step assessment card -->
+    <div class="card" id="question-card">
+      <div class="step-indicator" id="step-indicator">
+        Loading assessment…
+      </div>
+
+      <h2 id="question-label">Loading…</h2>
+      <p id="question-help" class="help-text"></p>
+
+      <div id="question-input"></div>
+
+      <div id="error-message" class="error-message"></div>
+
+      <div class="nav-buttons">
+        <button type="button" id="back-button" disabled>Back</button>
+        <button type="button" id="next-button">Next</button>
+      </div>
+    </div>
+
+    <!-- Results card -->
+    <div class="card" id="results-card" hidden>
+      <h2>Demo assessment results</h2>
+
+      <div id="variables-summary"></div>
+      <div id="vaccines-summary"></div>
+      <div id="locator-message"></div>
+
+      <button type="button" id="restart-button" class="secondary-button">
+        Start over
+      </button>
+    </div>
+
+    <p class="disclaimer">
+      This prototype illustrates how rules in a JSON file can drive an eligibility
+      assessment and a vaccine locator hand-off. The sample logic and outputs are
+      not clinical guidance. Always refer to official recommendations and consult
+      healthcare professionals.
+    </p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
